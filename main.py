@@ -23,8 +23,8 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://3000-firebase-paxuo-1751935024931.cluster-ux5mmlia3zhhask7riihruxydo.cloudworkstations.dev",
-        "https://flowyhire.vercel.app"
+        "https://3000-firebase-smartcita-1778088664370.cluster-hkcruqmgzbd2aqcdnktmz6k7ba.cloudworkstations.dev",
+        "https://smartcita.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
