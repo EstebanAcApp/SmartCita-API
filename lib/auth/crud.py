@@ -21,6 +21,7 @@ async def userRegister(req: Request, user: RegisterUser):
     
     user_dict = user.model_dump()
     user_dict["userId"] = userId
+    user_dict["email"] = email
     user_dict["password"] = hashed_password
     user_dict["userDevices"] = [user_info]
     user_dict["lastLogin"] = loginDate
@@ -47,6 +48,7 @@ async def companyRegister(req: Request, company: RegisterCompany):
     
     company_dict = company.model_dump()
     company_dict["userId"] = userId
+    company_dict["email"] = email
     company_dict["password"] = hashed_password
     company_dict["userDevices"] = [user_info]
     company_dict["lastLogin"] = loginDate
