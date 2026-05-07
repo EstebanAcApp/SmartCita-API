@@ -24,7 +24,7 @@ async def userRegister(req: Request, user: RegisterUser):
     user_dict["password"] = hashed_password
     user_dict["userDevices"] = [user_info]
     user_dict["lastLogin"] = loginDate
-    user_dict["typeAccount"] = "User"
+    user_dict["typeAccount"] = "Candidate"
 
     await db["users"].insert_one(user_dict)
 
@@ -50,6 +50,7 @@ async def companyRegister(req: Request, company: RegisterCompany):
     company_dict["password"] = hashed_password
     company_dict["userDevices"] = [user_info]
     company_dict["lastLogin"] = loginDate
+    company_dict["typeAccount"] = "Company"
 
     await db["users"].insert_one(company_dict)
 
