@@ -19,7 +19,7 @@ async def userRegister(req: Request, user: RegisterUser):
     user_info = get_request_info(req, deviceId)
     loginDate = get_login_date()
     
-    user_dict = user.dict()
+    user_dict = user.model_dump()
     user_dict["userId"] = userId
     user_dict["password"] = hashed_password
     user_dict["userDevices"] = [user_info]
@@ -45,13 +45,11 @@ async def companyRegister(req: Request, company: RegisterCompany):
     user_info = get_request_info(req, deviceId)
     loginDate = get_login_date()
     
-    company_dict = company.dict()
+    company_dict = company.model_dump()
     company_dict["userId"] = userId
     company_dict["password"] = hashed_password
     company_dict["userDevices"] = [user_info]
     company_dict["lastLogin"] = loginDate
-    company_dict["typeAccount"] = "Company"
-    company_dict["paymentStatus"] = "Pending"
 
     await db["users"].insert_one(company_dict)
 
