@@ -23,8 +23,8 @@ async def schedule(req: Request, interview: CreateInterview):
         f"{interview.date} {interview.time}", "%Y-%m-%d %H:%M"
     ).replace(tzinfo=timezone.utc)
 
-    interview_data["displayNameRecruiter"] = f"{company['firstName'].split[0]} {company['lastName'].split[0]}"
-    interview_data["displayNameCandidate"] = f"{candidate['firstName'].split[0]} {candidate['lastName'].split[0]}"
+    interview_data["displayNameRecruiter"] = f"{company['firstName'].split()[0]} {company['lastName'].split()[0]}"
+    interview_data["displayNameCandidate"] = f"{candidate['firstName'].split()[0]} {candidate['lastName'].split()[0]}"
 
     await db["interviews"].insert_one(interview_data)
 
