@@ -24,9 +24,9 @@ async def data(req: Request):
         )
         
         return {
-            user,
-            applications,
-            interviews
+            'user': user,
+            'applications': applications,
+            'interviews': interviews
         }
     
     if user['typeAccount'] == 'Company':
@@ -46,8 +46,8 @@ async def data(req: Request):
         )
 
         return {
-            user,
-            jobs,
-            interviews,
-            candidates
+            'user': user,
+            'jobs': jobs,
+            'interviews': interviews,
+            'candidates': candidates
         }
