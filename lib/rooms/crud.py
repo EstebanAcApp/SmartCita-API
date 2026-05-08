@@ -60,8 +60,8 @@ async def create_livekit_room(room_name: str):
         try:
             await lkapi.room.create_room(CreateRoomRequest(
                 name=room_name,
-                empty_timeout=10 * 60,  # se elimina 10 min después de que quede vacía
-                max_participants=20
+                empty_timeout=2 * 60,  # se elimina 2 min después de que quede vacía
+                max_participants=4
             ))
             await db["interviews"].update_one(
                 {"roomName": room_name},
