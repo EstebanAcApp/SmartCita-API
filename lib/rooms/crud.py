@@ -29,7 +29,12 @@ async def create_livekit_token(req: Request, interview_id: str):
         raise HTTPException(status_code=403, detail="This interview has already ended.")
 
     now = datetime.now(timezone.utc)
-    if now < interview["startTime"] - timedelta(minutes=10):
+    start_time = interview["startTime"]
+
+    if start_time.tzinfo is None:
+        start_time = start_time.replace(tzinfo=timezone.utc)
+
+    if now < start_time - timedelta(minutes=5):
         raise HTTPException(status_code=403, detail="Too early to join")
         
     if not interview.get("createdRoom", False):
