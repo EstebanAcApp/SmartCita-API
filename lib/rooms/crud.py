@@ -1,8 +1,10 @@
-from fastapi import APIRouter, HTTPException, Request
-from datetime import datetime, timedelta
-from livekit.api import LiveKitAPI, DeleteRoomRequest, CreateRoomRequest
+from fastapi import HTTPException, Request
+
+from livekit.api import LiveKitAPI
+from livekit.protocol.room import DeleteRoomRequest, CreateRoomRequest
 from livekit.api.access_token import AccessToken, VideoGrants
-from livekit.api import DeleteRoomRequest
+
+from datetime import datetime, timedelta, timezone
 from os import getenv
 
 from ..database import db
@@ -17,7 +19,7 @@ async def create_livekit_token(req: Request, interview_id: str):
         "interviewId": interview_id,
         "$or": [
             {"companyId": userId},
-            {"applicantId": userId}
+            {"candidateId": userId}
         ]
     })
     if not interview:
@@ -26,17 +28,22 @@ async def create_livekit_token(req: Request, interview_id: str):
     if interview["status"] == "Ended":
         raise HTTPException(status_code=403, detail="This interview has already ended.")
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     if now < interview["startTime"] - timedelta(minutes=10):
         raise HTTPException(status_code=403, detail="Too early to join")
         
     if not interview.get("createdRoom", False):
         await create_livekit_room(interview["roomName"])
 
+    if userId == interview["companyId"]:
+        identity = interview["displayNameRecruiter"]
+    else:
+        identity = interview["displayNameCandidate"]
+
     # 🎫 Crear token
     token = (
         AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
-        .with_identity(userId)
+        .with_identity(identity)
         .with_grants(VideoGrants(room_join=True, room=interview["roomName"]))
         .with_ttl(timedelta(minutes=interview["duration"] + 15))
     )
