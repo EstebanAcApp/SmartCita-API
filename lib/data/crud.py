@@ -1,4 +1,5 @@
 from fastapi import HTTPException, Request
+from datetime import timezone
 
 from ..database import db
 
@@ -26,6 +27,10 @@ async def data(req: Request):
         applications = await cursor_applications.to_list()
         interviews = await cursor_interviews.to_list()
 
+        for interview in interviews:
+            if "startTime" in interview and interview["startTime"]:
+                interview["startTime"] = interview["startTime"].replace(tzinfo=timezone.utc)
+
         return {
             'user': user,
             'applications': applications,
@@ -52,6 +57,10 @@ async def data(req: Request):
         interviews = await cursor_interviews.to_list()
         candidates = await cursor_candidates.to_list()
 
+        for interview in interviews:
+            if "startTime" in interview and interview["startTime"]:
+                interview["startTime"] = interview["startTime"].replace(tzinfo=timezone.utc)
+                
         return {
             'user': user,
             'jobs': jobs,
