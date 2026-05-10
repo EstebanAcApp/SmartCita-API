@@ -4,7 +4,8 @@ from livekit.api import LiveKitAPI
 from livekit.protocol.room import DeleteRoomRequest, CreateRoomRequest
 from livekit.api.access_token import AccessToken, VideoGrants
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from os import getenv
 
 from ..database import db
@@ -28,14 +29,19 @@ async def create_livekit_token(req: Request, interview_id: str):
     if interview["status"] == "Ended":
         raise HTTPException(status_code=403, detail="This interview has already ended.")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(ZoneInfo("UTC"))
+
     start_time = interview["startTime"]
-
     if start_time.tzinfo is None:
-        start_time = start_time.replace(tzinfo=timezone.utc)
+        start_time = start_time.replace(tzinfo=ZoneInfo("UTC"))
+    else:
+        start_time = start_time.astimezone(ZoneInfo("UTC"))
 
-    if now < start_time - timedelta(minutes=5):
-        raise HTTPException(status_code=403, detail="Too early to join")
+    if now < (start_time - timedelta(minutes=5)):
+        raise HTTPException(status_code=403, detail="Too early to join, please return 5 minutes before the scheduled time.")
+    
+    if now > (start_time + timedelta(minutes=interview["duration"])):
+        raise HTTPException(status_code=403, detail="This interview has already ended due to time constraints.")
         
     if not interview.get("createdRoom", False):
         await create_livekit_room(interview["roomName"])
@@ -50,7 +56,7 @@ async def create_livekit_token(req: Request, interview_id: str):
         AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
         .with_identity(identity)
         .with_grants(VideoGrants(room_join=True, room=interview["roomName"]))
-        .with_ttl(timedelta(minutes=interview["duration"] + 15))
+        .with_ttl(timedelta(minutes=interview["duration"] + 10))
     )
 
     return {"token": token.to_jwt(), "roomName": interview["roomName"]}
