@@ -1,6 +1,8 @@
 from fastapi import Request, HTTPException
 from typing import Any
 from uuid import uuid4
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from ..interviews.functions import check_valid_company
 from .models import CreateJob, UpdateJobStatus, DeleteJob
@@ -18,6 +20,17 @@ async def create_job(req: Request, job: CreateJob):
     job_dict['companyId'] = userId
     job_dict['companyName'] = company['companyName']
     job_dict['recruiterName'] = f"{company['firstName']} {company['lastName']}"
+
+    now_co = datetime.now(ZoneInfo("America/Bogota"))
+
+    job_dict['jobCreatedDate'] = now_co
+
+    months = {
+        1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio",
+        7: "Julio", 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"
+    }
+
+    job_dict['jobCreatedDateStr'] = f'{now_co.day} {months[now_co.month]} {now_co.year}'
 
     await db["jobs"].insert_one(job_dict)
 
@@ -61,7 +74,7 @@ async def delete_job(req: Request, job: DeleteJob):
 async def get_jobs_data(search: str | None, page: int = 1, size: int = 10):
     skip_records = (page - 1) * size
 
-    query: dict[str, Any] = {'status': 'Active'}
+    query: dict[str, Any] = {'status': 'Enabled'}
 
     if search:
         query['jobName'] = {'$regex': search, '$options': 'i'}
