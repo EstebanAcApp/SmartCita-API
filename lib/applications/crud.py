@@ -53,8 +53,10 @@ async def create_application(req: Request, application: CreateApplication):
     application_data['candidateExperience'] = candidate_data.get('experience', None)
 
     application_data['companyId'] = job_data['companyId']
+    application_data['companyName'] = job_data['companyName']
     application_data['jobName'] = job_data['jobName']
     application_data['jobPosition'] = job_data['jobPosition']
+    application_data['jobSalaryRange'] = job_data['jobSalaryRange']
 
     application_data['status'] = 'New'
 
