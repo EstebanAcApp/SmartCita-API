@@ -3,7 +3,7 @@ from typing import Literal
 
 class CreateJob(BaseModel):
     jobName: str
-    JobDescription: str
+    jobDescription: str
     jobPosition: str
     jobModality: Literal['On-Site', 'Remote', 'Hybrid']
     jobCity: str
