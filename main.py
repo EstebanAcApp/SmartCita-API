@@ -10,6 +10,10 @@ from lib.database import client
 
 from routes.auth import auth_router
 from routes.data import data_router
+
+from routes.jobs import job_router
+from routes.applications import application_router
+
 from routes.interviews import interview_router
 from routes.rooms import room_router
 
@@ -38,5 +42,9 @@ async def middleware_auth(req: Request, call_next):
 
 app.include_router(auth_router)
 app.include_router(data_router)
+
+app.include_router(job_router)
+app.include_router(application_router)
+
 app.include_router(interview_router)
 app.include_router(room_router)

@@ -6,6 +6,7 @@ async def check_valid_company(companyId: str):
     query = await db["users"].find_one(
         {"userId": companyId},
         {
+            "companyName": 1,
             "firstName": 1,
             "lastName": 1,
             "typeAccount": 1

@@ -13,16 +13,19 @@ async def data(req: Request):
         raise HTTPException(status_code=401, detail="Something Wrong")
 
     if user['typeAccount'] == 'Candidate':
-        applications = await db["applications"].find_one(
+        cursor_applications = db["applications"].find(
             {"candidateId": userId},
             {'_id': 0}
         )
 
-        interviews = await db["interviews"].find_one(
+        cursor_interviews = db["interviews"].find(
             {"candidateId": userId},
             {'_id': 0}
         )
         
+        applications = await cursor_applications.to_list()
+        interviews = await cursor_interviews.to_list()
+
         return {
             'user': user,
             'applications': applications,
@@ -30,20 +33,24 @@ async def data(req: Request):
         }
     
     if user['typeAccount'] == 'Company':
-        jobs = await db["jobs"].find_one(
+        cursor_jobs = db["jobs"].find(
             {"companyId": userId},
             {'_id': 0}
         )
 
-        interviews = await db["interviews"].find_one(
+        cursor_interviews = db["interviews"].find(
             {"companyId": userId},
             {'_id': 0}
         )
         
-        candidates = await db["applications"].find_one(
+        cursor_candidates = db["applications"].find(
             {"companyId": userId},
             {'_id': 0}
         )
+
+        jobs = await cursor_jobs.to_list()
+        interviews = await cursor_interviews.to_list()
+        candidates = await cursor_candidates.to_list()
 
         return {
             'user': user,
