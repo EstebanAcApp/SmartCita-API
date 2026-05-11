@@ -91,3 +91,11 @@ async def get_jobs_data(search: str | None, page: int = 1, size: int = 10):
     )
 
     return await cursor.to_list(length=size)
+
+async def get_job_data_id(job_id: str):
+    job_data = await db['jobs'].find_one(
+        {'jobId': job_id},
+        {'_id': 0}
+    )
+
+    return job_data

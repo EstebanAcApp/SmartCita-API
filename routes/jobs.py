@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Query
 
-from lib.jobs.crud import create_job, update_status_job, delete_job, get_jobs_data
+from lib.jobs.crud import create_job, update_status_job, delete_job, get_jobs_data, get_job_data_id
 from lib.jobs.models import CreateJob, UpdateJobStatus, DeleteJob
 
 job_router = APIRouter(prefix='/jobs')
@@ -24,3 +24,7 @@ async def jobs_data_route(
     size: int = Query(default=10, le=100)
 ):
     return await get_jobs_data(search, page, size)
+
+@job_router.get("/data/{job_id}/")
+async def job_data_id_route(job_id: str):
+    return await get_job_data_id(job_id)
