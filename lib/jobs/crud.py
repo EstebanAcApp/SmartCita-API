@@ -41,7 +41,7 @@ async def update_status_job(req: Request, job: UpdateJobStatus):
 
     await check_valid_company(userId)
 
-    count = await db['jobs'].count_documents({'userId': userId, 'jobId': job.jobId}, limit=1)
+    count = await db['jobs'].count_documents({'companyId': userId, 'jobId': job.jobId}, limit=1)
     if count <= 0:
         raise HTTPException(status_code=403, detail="Job not found")
 
@@ -58,7 +58,7 @@ async def delete_job(req: Request, job: DeleteJob):
     await check_valid_company(userId)
 
     job_exists = await db['jobs'].find_one(
-        {'userId': userId, 'jobId': job.jobId},
+        {'companyId': userId, 'jobId': job.jobId},
         {'jobName': 1}
     )
     if not job_exists:
