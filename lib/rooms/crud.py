@@ -4,6 +4,8 @@ from livekit.api import LiveKitAPI
 from livekit.protocol.room import DeleteRoomRequest, CreateRoomRequest
 from livekit.api.access_token import AccessToken, VideoGrants
 
+from .models import EndRoomModel
+
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from os import getenv
@@ -26,7 +28,7 @@ async def create_livekit_token(req: Request, interview_id: str):
     if not interview:
         raise HTTPException(status_code=403, detail="You are not allowed to join this interview.")
 
-    if interview["status"] == "Ended":
+    if interview["status"] == "Completed":
         raise HTTPException(status_code=403, detail="This interview has already ended.")
 
     now = datetime.now(ZoneInfo("UTC"))
@@ -78,11 +80,11 @@ async def create_livekit_room(room_name: str):
 
     return {"message": "Interview room created"}
 
-async def end_livekit_room(req: Request, room_name: str):
+async def end_livekit_room(req: Request, room: EndRoomModel):
     userId = req.state.user["userId"]
 
     is_company = await db["interviews"].find_one(
-        {"roomName": room_name, "companyId": userId}
+        {"roomName": room.roomName, "companyId": userId}
     )
 
     if not is_company:
@@ -91,11 +93,11 @@ async def end_livekit_room(req: Request, room_name: str):
     async with LiveKitAPI() as lkapi:
         try:
             await lkapi.room.delete_room(DeleteRoomRequest(
-                room=room_name,
+                room=room.roomName,
             ))
             await db["interviews"].update_one(
-                {"roomName": room_name},
-                {"$set": {"status": "Ended"}}
+                {"roomName": room.roomName, "companyId": userId},
+                {"$set": {"status": "Completed", 'rating': room.rating, 'note': room.note}}
             )
         except:
             raise HTTPException(status_code=500, detail="Error deleting room")

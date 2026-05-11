@@ -25,6 +25,10 @@ async def userRegister(req: Request, user: RegisterUser):
     user_dict["password"] = hashed_password
     user_dict["userDevices"] = [user_info]
     user_dict["lastLogin"] = loginDate
+    
+    user_dict["phoneNumber"] = None
+    user_dict["cvS3Key"] = None
+
     user_dict["typeAccount"] = "Candidate"
 
     await db["users"].insert_one(user_dict)
@@ -52,6 +56,12 @@ async def companyRegister(req: Request, company: RegisterCompany):
     company_dict["password"] = hashed_password
     company_dict["userDevices"] = [user_info]
     company_dict["lastLogin"] = loginDate
+
+    company_dict["companyIndustry"] = None
+    company_dict["companySize"] = None
+    company_dict["companyLocation"] = None
+    company_dict["companyWebsite"] = None
+
     company_dict["typeAccount"] = "Company"
 
     await db["users"].insert_one(company_dict)

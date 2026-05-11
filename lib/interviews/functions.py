@@ -27,7 +27,8 @@ async def check_valid_applicant(candidateId: str):
         {
             "firstName": 1,
             "lastName": 1,
-            "typeAccount": 1
+            "typeAccount": 1,
+            "cvS3Key": 1
         }
     )
 
