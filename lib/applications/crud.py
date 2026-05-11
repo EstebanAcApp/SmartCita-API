@@ -47,10 +47,6 @@ async def create_application(req: Request, application: CreateApplication):
 
     application_data['candidateId'] = userId
     application_data['candidateName'] = f'{candidate_data['firstName']} {candidate_data['lastName']}'
-    application_data['candidateEmail'] = candidate_data['email']
-    application_data['candidatePhone'] = candidate_data.get('phoneNumber', None)
-    application_data['candidatePosition'] = candidate_data.get('position', None)
-    application_data['candidateExperience'] = candidate_data.get('experience', None)
 
     application_data['companyId'] = job_data['companyId']
     application_data['companyName'] = job_data['companyName']
