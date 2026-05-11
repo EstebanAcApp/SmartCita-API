@@ -46,7 +46,7 @@ async def update_status_job(req: Request, job: UpdateJobStatus):
         raise HTTPException(status_code=403, detail="Job not found")
 
     await db["jobs"].update_one(
-        {'userId': userId, 'jobId': job.jobId},
+        {'companyId': userId, 'jobId': job.jobId},
         {"$set": {"status": job.status}}
     )
 
@@ -65,7 +65,7 @@ async def delete_job(req: Request, job: DeleteJob):
         raise HTTPException(status_code=403, detail="Job not found")
 
     if job.messageConfirmation == f'Delete-{job_exists['jobName'].split()[0]}':
-        await db['jobs'].delete_one({'userId': userId, 'jobId': job.jobId})
+        await db['jobs'].delete_one({'companyId': userId, 'jobId': job.jobId})
     else:
         raise HTTPException(status_code=403, detail="Invalid confirmation message")
 
