@@ -88,15 +88,17 @@ async def data(req: Request):
             {'_id': 0}
         )
         
-        applications = await cursor_applications.to_list()
-        interviews = await cursor_interviews.to_list()
+        applications = await cursor_applications.to_list(length=1000)
+        interviews = await cursor_interviews.to_list(length=1000)
 
         for interview in interviews:
             if "startTime" in interview and interview["startTime"]:
                 interview["startTime"] = interview["startTime"].replace(tzinfo=timezone.utc)
 
         if user['cvS3Key']:
-            user['cvUrl'] = get_presigned_url(user['cvS3Key'])
+            user['cvUrl'] = await get_presigned_url(user['cvS3Key'])
+        else:
+            user['cvUrl'] = None
 
         return {
             'user': user,
@@ -120,9 +122,9 @@ async def data(req: Request):
             {'_id': 0}
         )
 
-        jobs = await cursor_jobs.to_list()
-        interviews = await cursor_interviews.to_list()
-        candidates = await cursor_candidates.to_list()
+        jobs = await cursor_jobs.to_list(length=1000)
+        interviews = await cursor_interviews.to_list(length=1000)
+        candidates = await cursor_candidates.to_list(length=1000)
 
         for interview in interviews:
             if "startTime" in interview and interview["startTime"]:
@@ -130,7 +132,9 @@ async def data(req: Request):
 
         for candidate in candidates:
             if "cvS3Key" in candidate and candidate["cvS3Key"]:
-                candidate['cvUrl'] = get_presigned_url(candidate['cvS3Key'])
+                candidate['cvUrl'] = await get_presigned_url(candidate['cvS3Key'])
+            else:
+                candidate['cvUrl'] = None
 
         return {
             'user': user,
