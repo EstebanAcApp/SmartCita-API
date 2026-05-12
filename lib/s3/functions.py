@@ -1,6 +1,7 @@
 import os
 from fastapi import UploadFile, HTTPException
 import aioboto3
+from botocore.client import Config
 from dotenv import load_dotenv
 
 # Carga las variables del archivo .env
@@ -49,7 +50,14 @@ async def delete_cv(s3_key: str):
 
 async def get_presigned_url(s3_key: str, expires_in: int = 3600):
     try:
-       async with session.client("s3") as s3: # type: ignore
+        # Añadimos la configuración para forzar Signature Version 4
+        s3_config = Config(signature_version='s3v4')
+
+        async with session.client(
+            "s3", 
+            region_name=AWS_REGION,
+            config=s3_config
+        ) as s3: # type: ignore
             url = await s3.generate_presigned_url(
                 'get_object',
                 Params={
@@ -58,8 +66,8 @@ async def get_presigned_url(s3_key: str, expires_in: int = 3600):
                 },
                 ExpiresIn=expires_in
             )
-
             return url
+        
     except Exception as e:
         print(f"Error generando URL firmada: {e}")
         raise HTTPException(status_code=500, detail="No se pudo generar el enlace de acceso.")
