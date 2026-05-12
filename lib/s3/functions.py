@@ -20,9 +20,9 @@ async def upload_cv(userId: str, cv: UploadFile):
     s3_key = f"cvs/{userId}.pdf"
     
     try:
+        file_content = await cv.read()
+
         async with session.client("s3") as s3: # type: ignore
-            file_content = await cv.read()
-            
             await s3.put_object(
                 Bucket=AWS_S3_BUCKET,
                 Key=s3_key,
@@ -33,7 +33,6 @@ async def upload_cv(userId: str, cv: UploadFile):
         return s3_key
 
     except Exception as e:
-        print(f"Error subiendo a S3: {e}")
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 async def delete_cv(s3_key: str):
@@ -50,7 +49,7 @@ async def delete_cv(s3_key: str):
 
 async def get_presigned_url(s3_key: str, expires_in: int = 3600):
     try:
-        async with session.client("s3") as s3: # type: ignore
+       async with session.client("s3") as s3: # type: ignore
             url = await s3.generate_presigned_url(
                 'get_object',
                 Params={
@@ -59,7 +58,8 @@ async def get_presigned_url(s3_key: str, expires_in: int = 3600):
                 },
                 ExpiresIn=expires_in
             )
-        return url
+
+            return url
     except Exception as e:
         print(f"Error generando URL firmada: {e}")
         raise HTTPException(status_code=500, detail="No se pudo generar el enlace de acceso.")
