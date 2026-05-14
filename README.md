@@ -1,4 +1,4 @@
-# 🚀 FlowyHire REST API
+# 🚀 SmartCita REST API
 
 A modern, high-performance **REST API** built with [FastAPI](https://fastapi.tiangolo.com/).  
 
