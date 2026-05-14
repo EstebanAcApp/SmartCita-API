@@ -19,7 +19,7 @@ Este proyecto consiste en una plataforma web diseñada para optimizar y automati
 ---
 
 ## ⚡ Autor
-Developed by Esteban Francisco Acosta Aponte
+Desarrollado por Esteban Francisco Acosta Aponte
 
 **Backend Developer | Python | FastAPI | APIs**  
 
